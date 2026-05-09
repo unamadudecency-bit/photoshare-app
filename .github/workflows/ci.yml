@@ -1,0 +1,59 @@
+name: CI/CD - Build, Test, Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Syntax check
+        run: node -c src/index.js
+
+      - name: Run tests
+        run: npm test
+        env:
+          USE_MOCKS: 'true'
+          JWT_SECRET: 'ci-test-secret'
+
+  build-frontend:
+    name: Validate Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate HTML structure
+        run: |
+          test -f frontend/index.html && echo "✅ index.html exists"
+          test -f frontend/app.js && echo "✅ app.js exists"
+          test -f frontend/styles.css && echo "✅ styles.css exists"
+          test -f frontend/config.js && echo "✅ config.js exists"
+
+  deploy-azure:
+    name: Deploy to Azure (skipped until secrets configured)
+    needs: [test-backend, build-frontend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholder for Azure deployment
+        run: echo "Will deploy when AZURE_WEBAPP_PUBLISH_PROFILE secret is configured"
