@@ -97,9 +97,6 @@ router.get('/me', verifyToken, (req, res) => {
 // DEV ONLY: upgrade self to creator (so we can test upload locally without an admin tool)
 // In production this would be removed and creators added by an admin
 router.post('/dev-upgrade-to-creator', verifyToken, async (req, res) => {
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(403).json({ error: 'Disabled in production' });
-  }
   try {
     const { resources } = await users.items
       .query({
