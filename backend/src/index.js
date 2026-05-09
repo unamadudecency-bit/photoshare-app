@@ -19,7 +19,13 @@ app.use('/api/', rateLimit({ windowMs: 60_000, max: 100 }));
 
 // Serve uploaded files (mock mode) and frontend statics
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
-app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
+// Serve frontend statics — works in both local dev (../../frontend) and Azure deploy (../frontend)
+const frontendDirAzure = path.join(__dirname, '..', 'frontend');
+const frontendDirLocal = path.join(__dirname, '..', '..', 'frontend');
+const fs = require('fs');
+const frontendDir = fs.existsSync(frontendDirAzure) ? frontendDirAzure : frontendDirLocal;
+app.use(express.static(frontendDir));
+console.log('Serving frontend from:', frontendDir);
 
 // Health endpoint
 app.get('/api/health', (req, res) =>
