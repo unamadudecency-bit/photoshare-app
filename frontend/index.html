@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PhotoShare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>📷 PhotoShare</h1>
+    <div id="auth-area"></div>
+  </header>
+
+  <main>
+    <section id="search-section">
+      <input id="search-box" placeholder="Search title, location, tags…">
+      <button id="search-btn">Search</button>
+      <button id="clear-btn">Clear</button>
+    </section>
+
+    <section id="upload-section" style="display:none">
+      <h2>Upload a Photo (Creator)</h2>
+      <form id="upload-form">
+        <input type="file" id="image-file" accept="image/*" required>
+        <input type="text" id="title" placeholder="Title" required>
+        <textarea id="caption" placeholder="Caption"></textarea>
+        <input type="text" id="location" placeholder="Location">
+        <input type="text" id="people" placeholder="People (comma-separated)">
+        <button type="submit">Upload</button>
+      </form>
+    </section>
+
+    <h2 id="feed-title">Feed</h2>
+    <section id="feed"></section>
+  </main>
+
+  <div id="modal" class="hidden">
+    <div class="modal-content">
+      <span id="modal-close">&times;</span>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
