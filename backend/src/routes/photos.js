@@ -117,7 +117,7 @@ router.post('/:id/rate', verifyToken, async (req, res) => {
     photo.ratingSum = (photo.ratingSum || 0) + rating;
     photo.ratingCount = (photo.ratingCount || 0) + 1;
 
-    await photos.item(photo.id, photo.creatorId).replace(photo);
+    await photos.items.upsert(photo);
     res.json({ avgRating: photo.ratingSum / photo.ratingCount, count: photo.ratingCount });
   } catch (err) {
     console.error('Rate error:', err);

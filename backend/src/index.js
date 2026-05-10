@@ -7,6 +7,8 @@ const path = require('path');
 const config = require('./config');
 
 const app = express();
+// Trust the App Service / proxy in front of us (fixes rate-limit "X-Forwarded-For" warnings)
+app.set('trust proxy', 1);
 
 // Security & performance middleware
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));

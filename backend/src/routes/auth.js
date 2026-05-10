@@ -94,8 +94,6 @@ router.get('/me', verifyToken, (req, res) => {
   res.json({ user: req.user });
 });
 
-// DEV ONLY: upgrade self to creator (so we can test upload locally without an admin tool)
-// In production this would be removed and creators added by an admin
 router.post('/dev-upgrade-to-creator', verifyToken, async (req, res) => {
   try {
     const { resources } = await users.items
@@ -108,7 +106,8 @@ router.post('/dev-upgrade-to-creator', verifyToken, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     user.role = 'creator';
-    await users.item(user.id, user.id).replace(user);
+    // upsert is safer than replace when partition key resolution differs across SDK versions
+    await users.items.upsert(user);
 
     // Issue a new token with the upgraded role
     const newToken = jwt.sign(
@@ -122,7 +121,7 @@ router.post('/dev-upgrade-to-creator', verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error('Upgrade error:', err);
-    res.status(500).json({ error: 'Upgrade failed' });
+    res.status(500).json({ error: 'Upgrade failed', detail: err.message });
   }
 });
 
